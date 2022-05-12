@@ -1,0 +1,69 @@
+<div class="grid">
+    <div></div>
+    <div class="mainContainer">
+        <div class="navBar nopad">
+            <h2>Dashboard</h2>
+            <button class="uploadBtn">&plus;&nbsp;NEW&nbsp;UPLOAD</button>
+        </div>
+        <table class="displayTable">
+            <tr>
+                <th *ngFor="let row of tableHeaders">{{row}}</th>
+            </tr>            
+            <tr *ngFor="let rows of tableRows">
+                <td class="autoWidth">{{rows.patientID}}<br/>&nbsp;</td>
+                <td class="autoWidth">{{rows.patient.patientName}}<br/>{{rows.patient.patientAge}},&nbsp;{{rows.patient.patientGender}}</td>
+                <td class="autoWidth">{{rows.dateOfUpload | date:'mediumDate'}}<br/>{{rows.dateOfUpload | date:'shortTime'}}</td>
+                <td class="autoWidth flexBox lessSidePadding">
+                    <span class="autoWidth flexBox lessSidePadding" *ngFor="let file of rows.filesUploaded">
+                        <circle-progress
+                            [percent]="file.fileProgress"
+                            [radius]="7"   
+                            [showInnerStroke]="false"
+                            [outerStrokeWidth]="2"
+                            [outerStrokeColor]="'var(--uploadBtn)'"
+                            [animation]="false"
+                            [animationDuration]="300"
+                            [showUnits]="false"
+                            [showTitle]="false"
+                            [showSubtitle]="false"
+                            style="height:30px; margin: 6px auto;"
+                            *ngIf="(file.fileProgress < 100);else tickMark"
+                        >
+                        </circle-progress>
+                        <ng-template #tickMark>
+                            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"> 
+                                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/> 
+                                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                            </svg>
+                        </ng-template>
+                        {{file.fileName}}
+                    </span>
+                </td>
+                <td class="autoWidth">
+                    <span  
+                    class="pendingColor" 
+                    [ngClass]="(rows.processingStatus.includes('Done'))? 'done' : (rows.processingStatus.includes('Pending'))? 'pending' : 'ongoing'"
+                    >
+                    </span>
+                    &nbsp;&nbsp;&nbsp;{{rows.processingStatus}}
+                </td>
+                <td>
+                    <button class="resultsButton" [disabled]="!(rows.processingStatus.includes('Done'))">
+                        See Results
+                    </button>
+                </td>
+            </tr>        
+        </table>
+        <div class="pagiNation">
+            <ul class="flexBox">
+                <li [ngClass]="(!isDecrAvail())? 'displayNone':''"><button class="buttonPage" (click)="pageDecrement()">&#10094;</button></li>
+                <li *ngFor="let _ of [].constructor(this.totalPages); let i = index"><button [ngClass]="(getCurrentPage() === i+1)? 'activePage' : ''" class="buttonPage" (click)="changePage(i)">{{i + 1}}</button></li>
+                <li [ngClass]="(!isIncrAvail())? 'displayNone':''"><button class="buttonPage" (click)="pageIncrement()">&#10095;</button></li>
+            </ul>
+        </div>
+    </div>
+    <div class="secondCol">
+        <div class="sideFloat">KNOWLEDGE BASE</div>
+        <div class="sideFloat">RESEARCH PAPERS</div>
+    </div>
+</div>
